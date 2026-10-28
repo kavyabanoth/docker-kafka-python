@@ -2,15 +2,15 @@
 
 ## Overview
 
-A beginner-friendly messaging project using Apache Kafka,
-Docker Compose, and Python.
+A Python messaging application using Apache Kafka, Docker, Docker Compose, and AWS EC2.
 
-The Python producer sends JSON messages to a Kafka topic.
-The Python consumer reads and processes those messages.
+The Python producer sends JSON messages to a Kafka topic. The Python consumer reads and processes those messages.
 
 ## Architecture
 
-Python Producer -> Kafka Topic -> Python Consumer
+Python Producer -> Kafka Topic (test-topic) -> Python Consumer
+
+All application services communicate through Docker Compose's internal network.
 
 ## Technologies
 
@@ -19,45 +19,111 @@ Python Producer -> Kafka Topic -> Python Consumer
 - Docker
 - Docker Compose
 - kafka-python
+- AWS EC2
+- Linux
+- GitHub Actions
 
 ## Features
 
-- Kafka runs in a Docker container.
-- Python producer publishes JSON messages.
-- Python consumer reads messages from Kafka.
-- Consumer handles both JSON and plain-text messages.
+- Publishes JSON messages using a Python producer.
+- Transfers messages through an Apache Kafka topic.
+- Consumes and deserializes JSON messages.
+- Runs Kafka, producer, and consumer using Docker Compose.
+- Uses a Docker volume for Kafka data persistence.
+- Deploys the application on AWS EC2.
+
+## Project Structure
+
+- Dockerfile
+- docker-compose.yml
+- producer.py
+- consumer.py
+- requirements.txt
+- .github/workflows/python-ci.yml
+- readme.md
 
 ## Prerequisites
 
-- Python
-- Docker Desktop
+- Git
+- Docker Engine
 - Docker Compose
+- An AWS account for cloud deployment
 
-## Setup
+## Run the Application
 
-Install the Python dependency:
+Clone the repository:
 
-    python -m pip install -r requirements.txt
+    git clone https://github.com/kavyabanoth/docker-kafka-python.git
+    cd docker-kafka-python
 
-Start Kafka:
+Build the application images:
+
+    docker compose build
+
+Start the services:
 
     docker compose up -d
 
-Run the consumer in Terminal 1:
+Check the services:
 
-    python consumer.py
+    docker compose ps
 
-Run the producer in Terminal 2:
+View producer logs:
 
-    python producer.py
+    docker compose logs producer
 
-## Stop Kafka
+View consumer logs:
+
+    docker compose logs consumer
+
+The producer sends five JSON messages to the test-topic Kafka topic. The consumer receives and prints the messages.
+
+Stop the services:
 
     docker compose down
 
+## AWS EC2 Deployment
+
+The application was tested on an Amazon Linux 2023 EC2 instance.
+
+Deployment workflow:
+
+1. Launch an EC2 Linux instance.
+2. Connect using SSH.
+3. Install Docker, Docker Compose, and Git.
+4. Clone the project repository.
+5. Build the application images.
+6. Start the services with Docker Compose.
+7. Inspect producer and consumer logs.
+
+Verification commands:
+
+    docker compose ps
+    docker compose logs --tail=50 producer
+    docker compose logs --tail=50 consumer
+
+In the successful test, the producer sent five messages and the consumer received all five.
+
+## Security
+
+- Kafka communication uses the internal Docker network.
+- Do not expose Kafka's unauthenticated port publicly.
+- Restrict SSH access to trusted IP addresses.
+- Never commit AWS private keys, passwords, or API tokens.
+
 ## Learning Outcomes
 
-- Docker container management
-- Kafka topics, producers, and consumers
-- Python messaging
-- JSON serialization and deserialization
+- Containerizing Python applications.
+- Running multiple containers with Docker Compose.
+- Understanding Kafka producers, consumers, and topics.
+- Working with JSON serialization and deserialization.
+- Deploying containerized applications on AWS EC2.
+- Troubleshooting Docker networking.
+
+## Future Improvements
+
+- Publish application images to a container registry.
+- Extend GitHub Actions for automated image builds.
+- Add monitoring and logging.
+- Learn Terraform for infrastructure provisioning.
+- Explore Kubernetes fundamentals.

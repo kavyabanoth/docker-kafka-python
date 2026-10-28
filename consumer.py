@@ -9,7 +9,7 @@ def deserialize_message(value):
 
 consumer = KafkaConsumer(
     "test-topic",
-    bootstrap_servers=["localhost:9092"],
+    bootstrap_servers=["kafka:29092"],
     auto_offset_reset="earliest",
     enable_auto_commit=True,
     value_deserializer=deserialize_message
